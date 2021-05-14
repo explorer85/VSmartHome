@@ -22,6 +22,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QNetworkAccessManager manager;
+    QString sonoffIp;
     QString power = "off";
+
+    void loadSettings();
+    void switchSonoff(QString state);
 };
 #endif // MAINWINDOW_H
