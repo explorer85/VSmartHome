@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     loadSettings();
     switchSonoff("on");
-    QTimer::singleShot(10000, this,[this](){
+    QTimer::singleShot(timeToClose, this,[this](){
       switchSonoff("off");
 
 
@@ -56,8 +56,11 @@ void MainWindow::loadSettings() {
     QSettings settings(m_sSettingsFile, QSettings::IniFormat);
     if(!settings.contains("ip"))
         settings.setValue("ip", "192.168.0.92");
+    if(!settings.contains("timeclose"))
+        settings.setValue("timeclose", 10000);
 
     sonoffIp = settings.value("ip", "").toString();
+    timeToClose = settings.value("timeclose", "").toInt();
     qDebug() << sonoffIp;
 }
 

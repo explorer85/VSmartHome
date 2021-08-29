@@ -23,6 +23,7 @@ private:
     Ui::MainWindow *ui;
     QNetworkAccessManager manager;
     QString sonoffIp;
+    int timeToClose;
     QString power = "off";
 
     void loadSettings();
