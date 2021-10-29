@@ -14,16 +14,30 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     loadSettings();
-    switchSonoff("on");
-    QTimer::singleShot(timeToClose, this,[this](){
+    //включение при старте и выключение через интервал
+    /*switchSonoff("on");
+      QTimer::singleShot(timeToClose, this,[this](){
       switchSonoff("off");
-
-
       QTimer::singleShot(500, this,[](){
         QApplication::quit();
       });
-    });
+    });*/
 
+    t = new QTimer();
+    int wakeInterval = 10000;
+    t->setInterval(wakeInterval);
+    t->start();
+
+    connect(t, &QTimer::timeout, [this, &wakeInterval]() {
+        qDebug() << "timeout" << power_;
+        if (power_ == "off") {
+            t->setInterval(5000);
+            switchSonoff("on");
+        } else {
+            t->setInterval(wakeInterval);
+            switchSonoff("off");
+        }
+    });
 }
 
 MainWindow::~MainWindow()
@@ -34,15 +48,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked() {
     qDebug() << "MainWindow::on_pushButton_clicked()";
 
-
-
-    if (power == "off")
-        power = "on";
+    if (power_ == "off")
+        switchSonoff("on");
     else
-        power = "off";
-    switchSonoff(power);
-
-
+        switchSonoff("off");
 }
 
 void MainWindow::onManagerFinished(QNetworkReply *reply)
@@ -66,6 +75,7 @@ void MainWindow::loadSettings() {
 
 void MainWindow::switchSonoff(QString state) {
 
+    power_ = state;
     QNetworkRequest request(QUrl("http://" + sonoffIp + ":8081/zeroconf/switch"));
     request.setRawHeader("Content-Type", "text/plain;charset=UTF-8");
 
@@ -88,4 +98,3 @@ void MainWindow::switchSonoff(QString state) {
     qDebug() << data;
     manager.post(request,doc.toJson());
 }
-

@@ -24,7 +24,8 @@ private:
     QNetworkAccessManager manager;
     QString sonoffIp;
     int timeToClose;
-    QString power = "off";
+    QString power_ = "off";
+    QTimer *t;
 
     void loadSettings();
     void switchSonoff(QString state);
