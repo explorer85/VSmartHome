@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkReply>
-#include <QDebug>
-#include <QTimer>
 #include <QSettings>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,13 +24,16 @@ MainWindow::MainWindow(QWidget *parent)
     });*/
 
     t = new QTimer();
-    int wakeInterval = 30000;
+    int wakeInterval = 60000 * 5; // 5 минут
     t->setInterval(wakeInterval);
     t->start();
+    ui->textEditLog->append("timer started");
     connect(t, &QTimer::timeout, [this]() {
         qDebug() << "timeout" << power_;
+        ui->textEditLog->append(QDateTime::currentDateTime().toString() + " " +
+                                power_);
         switchSonoff("on");
-        QTimer::singleShot(5000, this, [this]() { switchSonoff("off"); });
+        QTimer::singleShot(7000, this, [this]() { switchSonoff("off"); });
     });
 }
 
