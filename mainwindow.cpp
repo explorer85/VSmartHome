@@ -24,19 +24,13 @@ MainWindow::MainWindow(QWidget *parent)
     });*/
 
     t = new QTimer();
-    int wakeInterval = 10000;
+    int wakeInterval = 30000;
     t->setInterval(wakeInterval);
     t->start();
-
-    connect(t, &QTimer::timeout, [this, &wakeInterval]() {
+    connect(t, &QTimer::timeout, [this]() {
         qDebug() << "timeout" << power_;
-        if (power_ == "off") {
-            t->setInterval(5000);
-            switchSonoff("on");
-        } else {
-            t->setInterval(wakeInterval);
-            switchSonoff("off");
-        }
+        switchSonoff("on");
+        QTimer::singleShot(5000, this, [this]() { switchSonoff("off"); });
     });
 }
 
