@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
         switchSonoff("on");
         QTimer::singleShot(7000, this, [this]() { switchSonoff("off"); });
     });
+    connect( &manager, &QNetworkAccessManager::finished , this, &MainWindow::onManagerFinished);
 }
 
 MainWindow::~MainWindow()
@@ -92,6 +93,7 @@ void MainWindow::switchSonoff(QString state) {
 
 
     QByteArray data = ui->textEdit->toPlainText().toUtf8();
-    qDebug() << data;
+    qDebug().noquote() << data;
     manager.post(request,doc.toJson());
+
 }
